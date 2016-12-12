@@ -1,0 +1,90 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PortableForgingStationTier1",
+        "stackId": "EquipmentSmithing:portableForgingStation",
+        "maxStackSize": 1
+    },
+    "DisplayName": {
+        "name": "Portable Forging Station"
+    },
+    "BlockDropGrammar": {
+        "blockDrops": ["2*Core:CobbleStone"]
+    },
+    "InteractionTarget": {},
+    "InteractionScreen": {
+        "screen": "EquipmentSmithing:ForgingStation"
+    },
+    "Workstation": {
+        "supportedProcessTypes": {
+            "Machines:Furnace": true,
+            "Smithing:BasicSmithingProcess": false,
+            "EquipmentSmithing:ForgingTier1Process": false,
+            "EquipmentSmithing:ForgingTier2Process": false,
+            "EquipmentSmithing:ForgingTier3Process": false,
+            "Crafting:UpgradeCraftingWorkstation": false
+        }
+    },
+    "WorkstationInventory": {
+        "slotAssignments": {
+            "INPUT": {
+                "slotStart": 2,
+                "slotCount": 4
+            },
+            "BOOSTER": {
+                "slotStart": 6,
+                "slotCount": 1
+            },
+            "TOOL": {
+                "slotStart": 1,
+                "slotCount": 1
+            },
+            "UPGRADE": {
+                "slotStart": 0,
+                "slotCount": 1
+            },
+            "FUEL": {
+                "slotStart": 8,
+                "slotCount": 1
+            },
+            "OUTPUT": {
+                "slotStart": 7,
+                "slotCount": 1
+            }
+        }
+    },
+    "CraftingStation": {
+        "type": "EquipmentSmithing:BasicForgingStation",
+        "workstationUITexture": "Smithing:BasicMetalworking"
+    },
+    "Inventory": {
+        "privateToOwner": false,
+        "itemSlots": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        ]
+    },
+    "HeatProducer": {
+        "temperatureAbsorptionRate": 0.9,
+        "temperatureLossRate": 0.7,
+        "maximumTemperature": 1000
+    },
+    "Health": {
+        "currentHealth": 25,
+        "maxHealth": 25,
+        "regenRate": 1,
+        "waitBeforeRegen": 3,
+        "destroyEntityOnNoHealth": true
+    },
+    "ActAsBlock": {
+        "block": "Smithing:BasicSmithingStation"
+    },
+    "DropBlockInventory": {}
+}

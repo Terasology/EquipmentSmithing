@@ -1,0 +1,25 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:CopperForgeHammer",
+        "stackId": "EquipmentSmithing:copperForgeHammer",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Copper Forge Hammer",
+        "description": "Specially designed copper hammer that's used for forging weapons, armor, and other utilities."
+    },
+    "Durability": {
+        "durability": 100,
+        "maxDurability": 100
+    },
+    "CraftingStationTool": {
+        "type": ["forgeHammer"]
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Specially designed copper hammer that's used for forging weapons and armor."
+        ]
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "ProcessDefinition": {
+        "processType": "Smithing:BasicSmithingProcess"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "Tools|Smithing:CopperForgeHammer",
+
+        "recipeComponents": ["3*Smithing:CopperBar"],
+        "recipeTools": ["1*hammer"],
+
+        "itemResult": "1*EquipmentSmithing:CopperForgeHammer"
+    }
+}

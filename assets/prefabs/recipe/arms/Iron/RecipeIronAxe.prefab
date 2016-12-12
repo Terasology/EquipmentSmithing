@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:ForgingTier3Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:IronAxe",
+
+        "recipeComponents": ["2*Smithing:ironBar"],
+        "recipeTools": ["1*forgeHammer"],
+        "requiredTemperature": 500,
+        "processingDuration": 10000,
+
+        "itemResult": "1*Equipment:IronAxe"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:IronAxe"
+    }
+}
