@@ -25,6 +25,7 @@ import org.terasology.entitySystem.systems.BaseComponentSystem;
 import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.equipmentSmithing.EquipmentSmithing;
 import org.terasology.equipmentSmithing.component.ForgingStationRecipeComponent;
+import org.terasology.equipmentSmithing.ui.ForgingStationRecipe;
 import org.terasology.multiBlock.Basic2DSizeFilter;
 import org.terasology.multiBlock.BlockUriEntityFilter;
 import org.terasology.multiBlock.MultiBlockFormRecipeRegistry;
@@ -32,6 +33,8 @@ import org.terasology.multiBlock.recipe.LayeredMultiBlockFormItemRecipe;
 import org.terasology.processing.system.AnyActivityFilter;
 import org.terasology.processing.system.ToolTypeEntityFilter;
 import org.terasology.registry.In;
+import org.terasology.workstation.component.ProcessDefinitionComponent;
+import org.terasology.workstation.process.WorkstationProcess;
 import org.terasology.workstation.system.WorkstationRegistry;
 import org.terasology.workstationCrafting.component.CraftingStationMaterialComponent;
 import org.terasology.workstationCrafting.component.CraftingStationRecipeComponent;
@@ -68,11 +71,11 @@ public class RegisterEquipmentSmithingRecipes extends BaseComponentSystem {
         workstationRegistry.registerProcessFactory(EquipmentSmithing.FORGING_TIER_1_PROCESS, new CraftingWorkstationProcessFactory());
         workstationRegistry.registerProcessFactory(EquipmentSmithing.FORGING_TIER_2_PROCESS, new CraftingWorkstationProcessFactory());
         workstationRegistry.registerProcessFactory(EquipmentSmithing.FORGING_TIER_3_PROCESS, new CraftingWorkstationProcessFactory());
-        workstationRegistry.registerProcessFactory(EquipmentSmithing.FORGING_TIER_4_PROCESS, new CraftingWorkstationProcessFactory());
+        //workstationRegistry.registerProcessFactory(EquipmentSmithing.FORGING_TIER_4_PROCESS, new CraftingWorkstationProcessFactory());
 
         addWorkstationFormingRecipes();
 
-        //addForgingStationRecipes();
+        addForgingStationRecipes();
     }
 
     /**
@@ -88,25 +91,21 @@ public class RegisterEquipmentSmithingRecipes extends BaseComponentSystem {
     }
 
     /**
-     * Add all of the potion recipes to the HerbalismStation.
+     * Add all of the potion recipes to the ForgingStation.
      */
     private void addForgingStationRecipes() {
-        // TODO: Temporarily removed for sake of testing.
-        /* workstationRegistry.registerProcess(WorkstationCrafting.HERBALISM_PROCESS_TYPE,
-                new CraftingWorkstationProcess(WorkstationCrafting.HERBALISM_PROCESS_TYPE, "WorkstationCrafting:HerbPotion", new HerbalismCraftingStationRecipe()));*/
-
-        // Add all the recipes marked with "HerbalismStationRecipeComponent" in their prefabs and add them to the list.
+         // Add all the recipes marked with "ForgingStationRecipeComponent" in their prefabs and add them to the list.
         for (Prefab prefab : prefabManager.listPrefabs(ForgingStationRecipeComponent.class)) {
+            ProcessDefinitionComponent processDef = prefab.getComponent(ProcessDefinitionComponent.class);
+
             // Get the Crafting Station recipe component of this recipe prefab.
             CraftingStationRecipeComponent recipeComponent = prefab.getComponent(CraftingStationRecipeComponent.class);
 
             // We individually register each process instead of using registerProcessFactory (with CraftingWorkstationProcessFactory)
             // as we need to add in some custom actions. The createProcess method in CraftingWorkstationProcessFactory won't do.
-            /*
-            workstationRegistry.registerProcess(Alchemy.HERBALISM_PROCESS_TYPE,
-                    new CraftingWorkstationProcess(Alchemy.HERBALISM_PROCESS_TYPE, recipeComponent.recipeId,
-                            new HerbalismCraftingStationRecipe(recipeComponent), prefab, entityManager));
-            */
+            workstationRegistry.registerProcess(processDef.processType,
+                    new CraftingWorkstationProcess(processDef.processType, recipeComponent.recipeId,
+                            new ForgingStationRecipe(recipeComponent), prefab, entityManager));
         }
     }
 

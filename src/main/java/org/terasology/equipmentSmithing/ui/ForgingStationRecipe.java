@@ -19,18 +19,32 @@ import com.google.common.base.Predicate;
 import org.terasology.durability.components.DurabilityComponent;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.prefab.Prefab;
+import org.terasology.equipment.component.EquipmentItemComponent;
+import org.terasology.equipment.component.effects.JumpSpeedEffectComponent;
+import org.terasology.equipment.component.effects.RegenEffectComponent;
+import org.terasology.equipment.component.effects.SwimSpeedEffectComponent;
+import org.terasology.equipment.component.effects.WalkSpeedEffectComponent;
+import org.terasology.equipmentSmithing.component.RuneComponent;
+import org.terasology.equipmentSmithing.component.RuneEquipmentEffectComponent;
+import org.terasology.equipmentSmithing.component.RuneEquipmentModifierComponent;
+import org.terasology.equipmentSmithing.component.RunePhysicalModifierComponent;
 import org.terasology.equipmentSmithing.system.ForgingStationIngredientPredicate;
+import org.terasology.logic.common.DisplayNameComponent;
+import org.terasology.logic.inventory.InventoryManager;
+import org.terasology.logic.inventory.InventoryUtils;
+import org.terasology.physicalstats.component.PhysicalStatsModifierComponent;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.nui.layers.ingame.inventory.ItemIcon;
 import org.terasology.rendering.nui.widgets.TooltipLine;
 import org.terasology.utilities.Assets;
 import org.terasology.workstationCrafting.component.CraftingStationRecipeComponent;
-import org.terasology.workstationCrafting.system.recipe.behaviour.ConsumeFluidBehaviour;
 import org.terasology.workstationCrafting.system.recipe.behaviour.ConsumeItemCraftBehaviour;
 import org.terasology.workstationCrafting.system.recipe.behaviour.InventorySlotResolver;
 import org.terasology.workstationCrafting.system.recipe.behaviour.InventorySlotTypeResolver;
+import org.terasology.workstationCrafting.system.recipe.behaviour.ReduceDurabilityCraftBehaviour;
 import org.terasology.workstationCrafting.system.recipe.render.result.ItemRecipeResultFactory;
 import org.terasology.workstationCrafting.system.recipe.workstation.AbstractWorkstationRecipe;
+import org.terasology.workstationCrafting.system.recipe.workstation.CraftingStationToolPredicate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,16 +60,16 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
      * @param recipe    The titular recipe applicable to this HerbalismStation.
      */
     public ForgingStationRecipe(CraftingStationRecipeComponent recipe) {
-        String oldPotionContainerName = "";
-
-        // Add the fluid behavior and required heat and duration based on the recipe's parameters.
-        //addFluidBehaviour(new ConsumeFluidBehaviour("Fluid:Water", 0.1f, new InventorySlotTypeResolver("FLUID_INPUT")));
+        // Set the required heat and processing duration. We don't need to set the required fluids as this station will
+        // not use them.
         setRequiredHeat(recipe.requiredTemperature);
         setProcessingDuration(recipe.processingDuration);
 
+        String[] splitItemResult = recipe.itemResult.split("\\*");
+
         // Create and set the custom result factory.
-        EquipmentRecipeResultFactory potionRecipeResultFactory = new EquipmentRecipeResultFactory(Assets.getPrefab(recipe.recipeId).get(), recipe.itemResult.split("\\*")[1], 1, oldPotionContainerName);
-        setResultFactory(potionRecipeResultFactory);
+        EquipmentRecipeResultFactory forgeRecipeResultFactory = new EquipmentRecipeResultFactory(Assets.getPrefab(splitItemResult[1]).get(),
+                splitItemResult[1], Integer.parseInt(splitItemResult[0]));
 
         // Add each of the ingredient (consumption) behaviors by parsing through the recipe components.
         for (String component : recipe.recipeComponents) {
@@ -63,66 +77,68 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
             int count = Integer.parseInt(split[0]);
             String type = split[1];
 
-            addIngredientBehaviour(new ConsumePotionContainerBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("INPUT"), potionRecipeResultFactory));
-            addIngredientBehaviour(new ConsumeBoosterBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("INPUT"), potionRecipeResultFactory));
+            addIngredientBehaviour(new ConsumeForgeIngredientBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("INPUT"), forgeRecipeResultFactory));
+            //addIngredientBehaviour(new ConsumeBoosterBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("BOOSTER"), potionRecipeResultFactory));
         }
+
+        // Add each of the tool behaviors by parsing through the recipe tools.
+        if (recipe.recipeTools != null) {
+            for (String recipeTool : recipe.recipeTools) {
+                String[] split = recipeTool.split("\\*", 2);
+                int count = Integer.parseInt(split[0]);
+                String type = split[1];
+
+                final ReduceDurabilityCraftBehaviour behaviour = new ReduceDurabilityCraftBehaviour(
+                        new CraftingStationToolPredicate(type), count, new InventorySlotTypeResolver("TOOL"));
+                addToolBehaviour(behaviour);
+            }
+        }
+
+        setResultFactory(forgeRecipeResultFactory);
     }
 
     /**
-     * This internal class is used for creating and defining the resultant potion.
+     * This internal class is used for creating and defining the resultant equipment item.
      */
     private final class EquipmentRecipeResultFactory extends ItemRecipeResultFactory {
-        private String toolTip;                      /** Potion's tooltip. This id displayed by default when mouse hovered over. */
-        private String oldPotionContainerName = "";  /** Name of the potion's container to be used. */
-        private EntityRef potionBottleRef;           /** Reference to the current potion bottle. */
-
-        private DurabilityComponent lastDurability;  /** Reference to the last potion bottle's durability. */
-        private String lastPotionBottleName = "";    /** Name of the last potion bottle used. */
+        private String toolTip;                      /** Item's tooltip. This id displayed by default when mouse hovered over. */
+        private EntityRef runeRef = EntityRef.NULL;  /** Reference to the last tune used.
 
         /**
-         * Set the reference to the current potion bottle.
+         * Set the reference to the current rune.
          *
-         * #param ref   Reference to the potion bottle entity.
+         * @param ref           Reference to the rune entity.
+         * @param destroyOld    Should the old rune entity be destroyed?
          */
-        public void setPotionBottleRef(EntityRef ref) {
-            potionBottleRef = ref;
+        public void setRuneRef(EntityRef ref, boolean destroyOld) {
+            if (destroyOld && runeRef != EntityRef.NULL) {
+                runeRef.destroy();
+            }
+
+            runeRef = ref;
         }
 
         /**
-         * Constructor for when the potion doesn't use bottles and the toolTip can be the default one.
+         * Basic constructor for setting up this result factory.
          *
-         * @param prefab    Prefab of the potion to be created.
-         * @param count     Number of the potions to be created.
+         * @param prefab    Prefab of the item to be created.
+         * @param count     Number of the item to be created.
          */
         private EquipmentRecipeResultFactory(Prefab prefab, int count) {
             super(prefab, count);
-            toolTip = "Herb Potion";
+            this.toolTip = toolTip;
         }
 
         /**
-         * Constructor for when the potion doesn't use bottles but the toolTip needs to be replaced.
+         * Constructor for when the equipment item's toolTip needs to be replaced.
          *
-         * @param prefab    Prefab of the potion to be created.
-         * @param toolTip   Potion's tooltip to be displayed.
-         * @param count     Number of the potions to be created.
+         * @param prefab    Prefab of the item to be created.
+         * @param toolTip   Item's tooltip to be displayed.
+         * @param count     Number of the items to be created.
          */
         private EquipmentRecipeResultFactory(Prefab prefab, String toolTip, int count) {
             super(prefab, count);
             this.toolTip = toolTip;
-        }
-
-        /**
-         * Constructor for when the potion uses bottles.
-         *
-         * @param prefab            Prefab of the potion to be created.
-         * @param toolTip           Potion's tooltip to be displayed.
-         * @param count             Number of the potions to be created.
-         * @param oldContainerName  Name of the empty potion container.
-         */
-        private EquipmentRecipeResultFactory(Prefab prefab, String toolTip, int count, String oldContainerName) {
-            super(prefab, count);
-            this.toolTip = toolTip;
-            oldPotionContainerName = oldContainerName;
         }
 
         /**
@@ -135,110 +151,126 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         public void setupDisplay(List<String> parameters, ItemIcon itemIcon) {
             super.setupDisplay(parameters, itemIcon);
 
-            final String herbParameter = parameters.get(0);
-            String herbName = "";
-
-            // If the herb parameters are greater than or equal to 3, then it's a herb. Otherwise, it's something else.
-            if (herbParameter.split("\\|").length >= 3) {
-                herbName = herbParameter.split("\\|")[3];
-            }
-            //itemIcon.setTooltipLines(Arrays.asList(new TooltipLine(toolTip), HerbalismClientSystem.getHerbTooltipLine(herbName)));
+            itemIcon.setTooltipLines(
+                    Arrays.asList(new TooltipLine(toolTip)));
         }
 
         /**
-         * Create the resultant potion(s)(item) using the given recipe components.
+         * Create the resultant equipment item(s) using the given recipe components.
          *
-         * @param parameters    All of the recipe components necessary for brewing this potion.
-         * @param multiplier    The number of potions that are created by this recipe.
-         * @return              A reference to the resultant potion item.
+         * @param parameters    All of the recipe components necessary for forging this equipment piece.
+         * @param multiplier    The number of items that are created by this recipe.
+         * @return              A reference to the resultant equipment item.
          */
         @Override
         public EntityRef createResult(List<String> parameters, int multiplier) {
             // Extract the herb parameters.
             final EntityRef result = super.createResult(parameters, multiplier);
-            final String herbParameter = parameters.get(0);
-            final String[] herbSplit = herbParameter.split("\\|");
 
-            String genomeId = "";
-            String genes = "";
+            // If there was a rune processed.
+            if (runeRef != EntityRef.NULL) {
+                RuneEquipmentModifierComponent runeEquipModifier = runeRef.getComponent(RuneEquipmentModifierComponent.class);
+                RunePhysicalModifierComponent runePhysicalModifierComponent = runeRef.getComponent(RunePhysicalModifierComponent.class);
+                String runeName = runeRef.getComponent(DisplayNameComponent.class).name;
 
-            // If the split is greater than or equal to 3, then it's a herb. Otherwise, it's something else.
-            if (herbSplit.length >= 3) {
-                genomeId = herbSplit[1];
-                genes = herbSplit[2];
-            }
+                // Add the effects of the rune's equip modifier (if any).
+                if (runeEquipModifier != null) {
+                    EquipmentItemComponent item = result.getComponent(EquipmentItemComponent.class);
 
-            // TODO: ADD HERE MODIFYING THE FINAL RESULT BASED ON THE RUNE SLOT INPUT.
-            /*
-            PotionComponent potionComponent = result.getComponent(PotionComponent.class);
-            if (potionComponent != null) {
-                if (!oldPotionContainerName.equals("")) {
-                    DurabilityComponent potionBottleDurabilityComponent = null;
+                    item.attack += runeEquipModifier.attack;
+                    item.defense += runeEquipModifier.defense;
+                    item.weight += runeEquipModifier.weight;
+                    item.speed += runeEquipModifier.speed;
 
-                    // If the current potion bottle ref exists, then copy the durability and name over to the appropriate instance
-                    // variables.
-                    if (potionBottleRef != null && potionBottleRef.exists()) {
-                        potionBottleDurabilityComponent = potionBottleRef.getComponent(DurabilityComponent.class);
-                        lastDurability = potionBottleDurabilityComponent;
-                        lastPotionBottleName = potionBottleRef.getParentPrefab().getUrn().toString();
-                        potionComponent.bottlePrefab = lastPotionBottleName;
-                    }
-                    // Otherwise, use the last durability value as the potionBottleDurabilityComponent - i.e., the one to be
-                    // used for this potion. This is necessary as when there's only one bottle in the workstation input,
-                    // consuming it will cause the potionBottleRef to become non-existent. Hence, why I'm using the last
-                    // known values instead.
-                    else {
-                        potionBottleDurabilityComponent = lastDurability;
+                    result.saveComponent(item);
+                }
+
+                // Add the effects of the rune's physical stats modifiers (if any).
+                if (runePhysicalModifierComponent != null) {
+
+                    PhysicalStatsModifierComponent phyStatsMod = result.getComponent(PhysicalStatsModifierComponent.class);
+
+                    if (phyStatsMod == null) {
+                        phyStatsMod = new PhysicalStatsModifierComponent();
                     }
 
-                    // Set the bottle prefab of the resultant potion to be the last known potion bottle name.
-                    // It's either taken from the entity ref, or from the recipe parameters list if the former is empty.
-                    if (!lastPotionBottleName.equals("")) {
-                        potionComponent.bottlePrefab = lastPotionBottleName;
-                    }
-                    else {
-                        potionComponent.bottlePrefab = oldPotionContainerName;
-                    }
+                    DisplayNameComponent resultDisplayName = result.getComponent(DisplayNameComponent.class);
+                    resultDisplayName.name += " of " + runePhysicalModifierComponent.id;
+                    resultDisplayName.description += "\nThis has a " + runeName + " fused into it.";
 
-                    // Create a new Durability component, and copy over the values from the old bottle's Durability component,
-                    // as long as the last durability exists. Lastly, add this new component to the resultant potion.
-                    if (potionBottleDurabilityComponent != null) {
-                        DurabilityComponent durabilityComponent = new DurabilityComponent();
-                        durabilityComponent.durability = potionBottleDurabilityComponent.durability;
-                        durabilityComponent.maxDurability = potionBottleDurabilityComponent.maxDurability;
-                        result.addComponent(durabilityComponent);
-                    }
+                    phyStatsMod.id = resultDisplayName.name;
+                    phyStatsMod.strength += runePhysicalModifierComponent.strength;
+                    phyStatsMod.dexterity += runePhysicalModifierComponent.dexterity;
+                    phyStatsMod.constitution += runePhysicalModifierComponent.constitution;
+                    phyStatsMod.agility += runePhysicalModifierComponent.agility;
+                    phyStatsMod.endurance += runePhysicalModifierComponent.endurance;
+                    phyStatsMod.charisma += runePhysicalModifierComponent.charisma;
+                    phyStatsMod.luck += runePhysicalModifierComponent.luck;
+
+                    result.saveComponent(resultDisplayName);
+                    result.addOrSaveComponent(phyStatsMod);
+                }
+
+                // Add the effects of the rune's equipment effect (if any).
+                if (runeRef.hasComponent(RuneEquipmentEffectComponent.class)) {
+                    addEquipmentEffect(result, runeRef);
+
+                    DisplayNameComponent resultDisplayName = result.getComponent(DisplayNameComponent.class);
+                    resultDisplayName.name += " of " + runeRef.getComponent(RuneEquipmentEffectComponent.class).id;
+                    resultDisplayName.description += "\nThis has a " + runeName + " fused into it.";
+                    result.saveComponent(resultDisplayName);
                 }
             }
-            */
 
             return result;
         }
+
+        /**
+         * Add an equipment effect onto an item. Note that this will replace the older effect if it already exists
+         * on this item.
+         * TODO: Only four effects are added for onw. Add the rest later.
+         *
+         * @param item  A reference to the equipment item.
+         * @param rune  A reference to the rune being applied.
+         */
+        private void addEquipmentEffect(EntityRef item, EntityRef rune) {
+            if (rune.hasComponent(JumpSpeedEffectComponent.class)) {
+                item.addComponent(rune.getComponent(JumpSpeedEffectComponent.class));
+            } else if (rune.hasComponent(RegenEffectComponent.class)) {
+                item.addComponent(rune.getComponent(RegenEffectComponent.class));
+            } else if (rune.hasComponent(SwimSpeedEffectComponent.class)) {
+                item.addComponent(rune.getComponent(SwimSpeedEffectComponent.class));
+            } else if (rune.hasComponent(WalkSpeedEffectComponent.class)) {
+                item.addComponent(rune.getComponent(WalkSpeedEffectComponent.class));
+            }
+        }
     }
 
     /**
-     * This internal class is used to define the custom consumption behavior of potion bottles during crafting.
+     * This internal class is used to define the custom consumption behavior of forge ingredients during crafting.
      */
-    private final class ConsumePotionContainerBehaviour extends ConsumeItemCraftBehaviour {
-        /** Reference to the potion crafting result factory. */
-        private EquipmentRecipeResultFactory potionRecipeResultFactory;
+    private final class ConsumeForgeIngredientBehaviour extends ConsumeItemCraftBehaviour {
+        /** Reference to the equipment forging result factory. */
+        private EquipmentRecipeResultFactory equipmentRecipeResultFactory;
+        private EntityRef runeRef = EntityRef.NULL;
 
         /**
          * Constructor which creates the baseline for this item consumption behavior.
          *
-         * @param matcher                       Predicate matcher for filtering out items that are not empty potion containers.
-         * @param count                         Number of potion containers to consume while crafting.
+         * @param matcher                       Predicate matcher for filtering out items that are not forge ingredients.
+         * @param count                         Quantity of this ingredient to consume while crafting.
          * @param resolver                      To manage the inventory changes during this behavior.
-         * @param potionRecipeResultFactory     Reference to the associated potion result factory.
+         * @param equipmentRecipeResultFactory  Reference to the associated equipment result factory.
          */
-        private ConsumePotionContainerBehaviour(Predicate<EntityRef> matcher, int count, InventorySlotResolver resolver, EquipmentRecipeResultFactory potionRecipeResultFactory) {
+        private ConsumeForgeIngredientBehaviour(Predicate<EntityRef> matcher, int count, InventorySlotResolver resolver,
+                                                EquipmentRecipeResultFactory equipmentRecipeResultFactory) {
             super(matcher, count, resolver);
-            this.potionRecipeResultFactory = potionRecipeResultFactory;
+            this.equipmentRecipeResultFactory = equipmentRecipeResultFactory;
         }
 
         /**
-         * Get the ingredient parameters and where they are located in the workstation's inventory, and return them as a String.
-         * If the current item being checked is an empty potion bottle, give the result factory class that information.
+         * Get the ingredient parameters and where they are located in the workstation's inventory, and return them as
+         * a String.
          *
          * @param slots     List of workstation inventory slots that the item is present in.
          * @param item      Reference to the recipe component item in question.
@@ -246,58 +278,20 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
          */
         @Override
         protected String getParameter(List<Integer> slots, EntityRef item) {
-            /*
-            if (item.hasComponent(EmptyPotionComponent.class)) {
-                potionRecipeResultFactory.setPotionBottleRef(item);
-            }
-            */
-            return super.getParameter(slots, item);
-        }
-    }
-
-    /**
-     * This internal class is used to define the custom consumption behavior of potion bottles during crafting.
-     */
-    private final class ConsumeBoosterBehaviour extends ConsumeItemCraftBehaviour {
-        /** Reference to the potion crafting result factory. */
-        private EquipmentRecipeResultFactory potionRecipeResultFactory;
-
-        /**
-         * Constructor which creates the baseline for this item consumption behavior.
-         *
-         * @param matcher                       Predicate matcher for filtering out items that are not empty potion containers.
-         * @param count                         Number of potion containers to consume while crafting.
-         * @param resolver                      To manage the inventory changes during this behavior.
-         * @param potionRecipeResultFactory     Reference to the associated potion result factory.
-         */
-        private ConsumeBoosterBehaviour(Predicate<EntityRef> matcher, int count, InventorySlotResolver resolver, EquipmentRecipeResultFactory potionRecipeResultFactory) {
-            super(matcher, count, resolver);
-            this.potionRecipeResultFactory = potionRecipeResultFactory;
-        }
-
-        /**
-         * Get the ingredient parameters and where they are located in the workstation's inventory, and return them as a String.
-         * If the current item being checked is an empty potion bottle, give the result factory class that information.
-         *
-         * @param slots     List of workstation inventory slots that the item is present in.
-         * @param item      Reference to the recipe component item in question.
-         * @return          The ingredient parameters of this item in a combined String.
-         */
-        @Override
-        protected String getParameter(List<Integer> slots, EntityRef item) {
-            /*
-            if (item.hasComponent(EmptyPotionComponent.class)) {
-                potionRecipeResultFactory.setPotionBottleRef(item);
-            }
-            */
             return super.getParameter(slots, item);
         }
 
         @Override
         public void processIngredient(EntityRef instigator, EntityRef entity, String parameter, int multiplier) {
-            // Check to see if it's a rune
-            // if (entity.hasComponent(RuneComponent.class)
-            // Save ref to it so that i
+            EntityRef boosterItem = InventoryUtils.getItemAt(entity, 6);
+            if (boosterItem != EntityRef.NULL && boosterItem.hasComponent(RuneComponent.class)) {
+                runeRef = boosterItem.copy();
+                CoreRegistry.get(InventoryManager.class).removeItem(entity, instigator, boosterItem, true, 1 * multiplier);
+            } else {
+                runeRef = EntityRef.NULL;
+            }
+
+            equipmentRecipeResultFactory.setRuneRef(runeRef, true);
             super.processIngredient(instigator, entity, parameter, multiplier);
         }
     }

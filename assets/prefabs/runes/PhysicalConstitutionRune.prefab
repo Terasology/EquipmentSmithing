@@ -1,0 +1,32 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PhysicalConstitutionRune",
+        "stackId": "EquipmentSmithing:tier1PhysicalConstitutionRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Physical Constitution (Tier 1)",
+        "description": "A rune that increases that raises the item's wielder's constitution by 10 when used as a booster during forging."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1PhysicalConstitution"
+    },
+    "RunePhysicalModifier": {
+        "id": "+10 CON",
+        "constitution": 10
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that increases that raises the item's wielder's constitution by 10 when used as a booster during forging."
+        ]
+    }
+}

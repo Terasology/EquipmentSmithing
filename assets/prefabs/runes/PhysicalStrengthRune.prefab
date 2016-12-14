@@ -1,0 +1,32 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PhysicalStrengthRune",
+        "stackId": "EquipmentSmithing:tier1PhysicalStrengthRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Physical Strength (Tier 1)",
+        "description": "A rune that increases that raises the item's wielder's strength by 10 when used as a booster during forging."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1PhysicalStrength"
+    },
+    "RunePhysicalModifier": {
+        "id": "+10 STR",
+        "strength": 10
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that increases that raises the item's wielder's strength by 10 when used as a booster during forging."
+        ]
+    }
+}

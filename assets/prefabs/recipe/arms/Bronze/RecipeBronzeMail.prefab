@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:ForgingTier2Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:BronzeMail",
+
+        "recipeComponents": ["4*Smithing:bronzeBar"],
+        "recipeTools": ["1*forgeHammer"],
+        "requiredTemperature": 500,
+        "processingDuration": 10000,
+
+        "itemResult": "1*Equipment:BronzeMail"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:BronzeMail"
+    }
+}

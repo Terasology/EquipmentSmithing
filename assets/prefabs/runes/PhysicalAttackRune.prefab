@@ -1,0 +1,31 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PhysicalAttackRune",
+        "stackId": "EquipmentSmithing:tier1PhysicalAttackRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Physical Attack (Tier 1)",
+        "description": "A rune that increases an item's physical attack by 5 when used as a booster during forging."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1PhysicalAttack"
+    },
+    "RuneEquipmentModifier": {
+        "attack": 5
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that increases an item's physical attack by 5 when used as a booster during forging."
+        ]
+    }
+}

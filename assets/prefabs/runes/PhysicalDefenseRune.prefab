@@ -1,0 +1,31 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PhysicalDefenseRune",
+        "stackId": "EquipmentSmithing:tier1PhysicalDefenseRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Physical Defense (Tier 1)",
+        "description": "A rune that increases an item's physical defense by 5 when used as a booster during forging."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1PhysicalDefense"
+    },
+    "RuneEquipmentModifier": {
+        "defense": 5
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that increases an item's physical defense by 5 when used as a booster during forging."
+        ]
+    }
+}

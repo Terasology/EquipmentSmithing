@@ -1,0 +1,37 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:RegenRune",
+        "stackId": "EquipmentSmithing:tier1RegenRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Health Regeneration (Tier 1)",
+        "description": "A rune that allows the item it's implanted on to regenerate the user's health. 3 HP per second."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1HealthRegen"
+    },
+    "RuneEquipmentEffect": {
+        "id": "Minor Regeneration"
+    },
+    "RegenEffect" : {
+        "magnitude" : 3,
+        "duration" : 36000,
+        "affectsUser" : true,
+        "affectsEnemies" : false
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that allows the item it's implanted on to regenerate the user's health. 3 HP per second."
+        ]
+    }
+}
