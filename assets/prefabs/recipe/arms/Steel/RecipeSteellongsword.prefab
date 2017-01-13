@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:ForgingTier3Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:Steellongsword",
+
+        "recipeComponents": ["4*Smithing:steelBar"],
+        "recipeTools": ["1*forgeHammer"],
+        "requiredTemperature": 400,
+        "processingDuration": 10000,
+
+        "itemResult": "1*Equipment:Steellongsword"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:Steellongsword"
+    }
+}
