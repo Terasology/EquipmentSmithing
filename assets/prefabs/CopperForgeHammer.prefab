@@ -14,7 +14,7 @@
         "maxDurability": 100
     },
     "CraftingStationTool": {
-        "type": ["forgeHammer"]
+        "type": ["forgeHammer", "hammer"]
     },
     "ItemHelp": {
         "category": "EquipmentSmithing",
