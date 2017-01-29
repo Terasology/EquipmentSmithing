@@ -2,6 +2,7 @@
     "DisplayName": {
         "name": "Basic Forging Station"
     },
+    "Network": {},
     "BlockDropGrammar": {
         "blockDrops": ["2*Core:CobbleStone"]
     },

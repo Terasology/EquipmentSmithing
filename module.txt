@@ -1,6 +1,6 @@
 {
     "id" : "EquipmentSmithing",
-    "version" : "1.0.0-SNAPSHOT",
+    "version" : "1.0.1-SNAPSHOT",
     "author" : "XTariq",
     "displayName" : "Equipment Smithing",
     "description" : "This modules bridges the Equipment and Smithing modules so that a player can forge weaponry and armor.",
@@ -23,7 +23,7 @@
         },
         {
             "id" : "WorkstationCrafting",
-            "minVersion" : "1.0.0"
+            "minVersion" : "1.0.1"
         }
     ],
     "serverSideOnly" : false

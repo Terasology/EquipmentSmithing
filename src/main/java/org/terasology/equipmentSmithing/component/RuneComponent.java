@@ -16,7 +16,9 @@
 package org.terasology.equipmentSmithing.component;
 
 import org.terasology.entitySystem.Component;
+import org.terasology.network.Replicate;
 
 public class RuneComponent implements Component {
+    @Replicate
     public String runeID;
 }
