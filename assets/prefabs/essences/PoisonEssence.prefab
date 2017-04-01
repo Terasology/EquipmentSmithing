@@ -1,0 +1,29 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PoisonEssence",
+        "stackId": "EquipmentSmithing:poisonEssence",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Poison Essence",
+        "description": "Essence that contains toxins."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "RuneEssence": {
+        "runeEssenceID": "PoisonEssence",
+        "tier": 1
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:poisonEssence"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Essence that contains toxins."
+        ]
+    }
+}

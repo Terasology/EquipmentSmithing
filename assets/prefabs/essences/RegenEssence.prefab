@@ -1,0 +1,29 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:RegenEssence",
+        "stackId": "EquipmentSmithing:regenEssence",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Regen Essence",
+        "description": "Essence that affects the physical body regeneration."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "RuneEssence": {
+        "runeEssenceID": "RegenEssence",
+        "tier": 1
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:regenEssence"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Essence that affects the physical body regeneration."
+        ]
+    }
+}

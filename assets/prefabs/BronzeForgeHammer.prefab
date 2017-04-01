@@ -1,0 +1,25 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:BronzeForgeHammer",
+        "stackId": "EquipmentSmithing:bronzeForgeHammer",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Bronze Forge Hammer",
+        "description": "Specially designed bronze hammer that's used for forging weapons, armor, and other utilities."
+    },
+    "Durability": {
+        "durability": 150,
+        "maxDurability": 150
+    },
+    "CraftingStationTool": {
+        "type": ["forgeHammer", "hammer"]
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Specially designed bronze hammer that's used for forging weapons and armor."
+        ]
+    }
+}

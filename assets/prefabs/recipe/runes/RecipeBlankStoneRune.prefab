@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:RunecraftingTier1Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:BlankStoneRune",
+
+        "recipeComponents": ["3*Woodcrafting:stone"],
+        "recipeTools": ["1*hammer"],
+        "requiredTemperature": 300,
+        "processingDuration": 5000,
+
+        "itemResult": "1*EquipmentSmithing:BlankStoneRune"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:BlankStoneRune"
+    }
+}
