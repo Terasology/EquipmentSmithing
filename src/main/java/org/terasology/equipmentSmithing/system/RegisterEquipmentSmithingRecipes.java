@@ -34,7 +34,6 @@ import org.terasology.processing.system.AnyActivityFilter;
 import org.terasology.processing.system.ToolTypeEntityFilter;
 import org.terasology.registry.In;
 import org.terasology.workstation.component.ProcessDefinitionComponent;
-import org.terasology.workstation.process.WorkstationProcess;
 import org.terasology.workstation.system.WorkstationRegistry;
 import org.terasology.workstationCrafting.component.CraftingStationMaterialComponent;
 import org.terasology.workstationCrafting.component.CraftingStationRecipeComponent;
@@ -85,8 +84,8 @@ public class RegisterEquipmentSmithingRecipes extends BaseComponentSystem {
         LayeredMultiBlockFormItemRecipe herbalismStationRecipe = new LayeredMultiBlockFormItemRecipe(
                 new ToolTypeEntityFilter("forgeHammer"), new Basic2DSizeFilter(3, 1), new AnyActivityFilter(),
                 "EquipmentSmithing:BasicForgingStation", null);
-        herbalismStationRecipe.addLayer(1, 1, new BlockUriEntityFilter(new BlockUri("Core:Brick")));
-        herbalismStationRecipe.addLayer(1, 1, new BlockUriEntityFilter(new BlockUri(new ResourceUrn("Core:CobbleStone"), new ResourceUrn(("Engine:EighthBlock")))));
+        herbalismStationRecipe.addLayer(1, 1, new BlockUriEntityFilter(new BlockUri("CoreBlocks:Brick")));
+        herbalismStationRecipe.addLayer(1, 1, new BlockUriEntityFilter(new BlockUri(new ResourceUrn("CoreBlocks:CobbleStone"), new ResourceUrn(("Engine:EighthBlock")))));
         multiBlockFormRecipeRegistry.addMultiBlockFormItemRecipe(herbalismStationRecipe);
     }
 
