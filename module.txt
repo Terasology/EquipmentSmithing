@@ -5,7 +5,7 @@
     "displayName" : "Equipment Smithing",
     "description" : "This modules bridges the Equipment and Smithing modules so that a player can forge weaponry and armor.",
     "dependencies" : [
-        {"id" : "Core", "minVersion" : "2.0.0"},
+        {"id" : "Core", "minVersion" : "3.0.0"},
         {"id" : "CoreBlocks", "minVersion" : "1.0.0"},
         {"id" : "Equipment", "minVersion" : "1.0.0"},
         {"id" : "Smithing", "minVersion" : "1.0.0"},
