@@ -3,7 +3,7 @@
         "processType": "EquipmentSmithing:ForgingTier3Process"
     },
     "CraftingStationRecipe": {
-        "recipeId": "EquipmentSmithing:Steellongsword",
+        "recipeId": "EquipmentSmithing:SteelLongsword",
 
         "recipeComponents": ["4*Smithing:steelBar"],
         "recipeTools": ["1*forgeHammer"],
