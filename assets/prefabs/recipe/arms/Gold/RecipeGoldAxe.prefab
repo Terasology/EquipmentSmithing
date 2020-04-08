@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:ForgingTier3Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:GoldAxe",
+
+        "recipeComponents": ["3*Smithing:GoldBar"],
+        "recipeTools": ["1*forgeHammer"],
+        "requiredTemperature": 500,
+        "processingDuration": 10000,
+
+        "itemResult": "1*Equipment:GoldAxe"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:GoldAxe"
+    }
+}
