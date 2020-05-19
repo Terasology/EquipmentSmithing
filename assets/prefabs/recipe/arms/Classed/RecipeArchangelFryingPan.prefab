@@ -1,0 +1,18 @@
+{
+  "ProcessDefinition": {
+    "processType": "EquipmentSmithing:ForgingTier3Process"
+  },
+  "CraftingStationRecipe": {
+    "recipeId": "EquipmentSmithing:CopperAxe",
+
+    "recipeComponents": ["2*Smithing:platinumBar", "3*Smithing:steelBar"],
+    "recipeTools": ["1*forgeHammer"],
+    "requiredTemperature": 700,
+    "processingDuration": 14000,
+
+    "itemResult": "1*Equipment:ArchangelFryingPan"
+  },
+  "ForgingStationRecipe": {
+    "recipeId": "EquipmentSmithing:ArchangelFryingPan"
+  }
+}

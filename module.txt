@@ -1,30 +1,18 @@
 {
-    "id" : "EquipmentSmithing",
-    "version" : "1.0.1-SNAPSHOT",
-    "author" : "XTariq",
-    "displayName" : "Equipment Smithing",
-    "description" : "This modules bridges the Equipment and Smithing modules so that a player can forge weaponry and armor.",
-    "dependencies" : [
-        {
-            "id" : "Core",
-            "minVersion" : "1.0.0"
-        },
-        {
-            "id" : "Equipment",
-            "minVersion" : "1.0.0"
-        },
-        {
-            "id" : "Smithing",
-            "minVersion" : "1.0.0"
-        },
-        {
-            "id" : "PhysicalStats",
-            "minVersion" : "0.1.0"
-        },
-        {
-            "id" : "WorkstationCrafting",
-            "minVersion" : "1.0.1"
-        }
+    "id": "EquipmentSmithing",
+    "version": "1.1.0",
+    "author": "XTariq",
+    "displayName": "Equipment Smithing",
+    "description": "This modules bridges the Equipment and Smithing modules so that a player can forge weaponry and armor.",
+    "dependencies": [
+        { "id": "CoreAssets", "minVersion": "2.0.1" },
+        { "id": "Equipment", "minVersion": "1.2.0" },
+        { "id": "Inventory", "minVersion": "1.1.0" },
+        { "id": "PhysicalStats", "minVersion": "1.0.0" },
+        { "id": "Smithing", "minVersion": "1.1.0" },
+        { "id": "WorkstationCrafting", "minVersion": "1.0.1" }
     ],
-    "serverSideOnly" : false
+    "serverSideOnly": false,
+    "isLibrary": true,
+    "isAugmentation": true
 }

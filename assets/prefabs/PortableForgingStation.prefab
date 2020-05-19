@@ -8,8 +8,8 @@
     "DisplayName": {
         "name": "Portable Forging Station"
     },
-    "BlockDropGrammar": {
-        "blockDrops": ["2*Core:CobbleStone"]
+    "DropGrammar": {
+        "blockDrops": ["2*CoreAssets:CobbleStone"]
     },
     "InteractionTarget": {},
     "InteractionScreen": {
@@ -84,6 +84,7 @@
         "waitBeforeRegen": 3,
         "destroyEntityOnNoHealth": true
     },
+    "Network": {},
     "ActAsBlock": {
         "block": "Smithing:BasicSmithingStation"
     },
