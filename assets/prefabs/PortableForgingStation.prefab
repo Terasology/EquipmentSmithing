@@ -8,8 +8,8 @@
     "DisplayName": {
         "name": "Portable Forging Station"
     },
-    "BlockDropGrammar": {
-        "blockDrops": ["2*CoreBlocks:CobbleStone"]
+    "DropGrammar": {
+        "blockDrops": ["2*CoreAssets:CobbleStone"]
     },
     "InteractionTarget": {},
     "InteractionScreen": {
