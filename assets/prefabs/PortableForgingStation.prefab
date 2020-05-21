@@ -22,6 +22,7 @@
             "EquipmentSmithing:ForgingTier1Process": false,
             "EquipmentSmithing:ForgingTier2Process": false,
             "EquipmentSmithing:ForgingTier3Process": false,
+            "EquipmentSmithing:RunecraftingTier1Process": false,
             "Crafting:UpgradeCraftingWorkstation": false
         }
     },

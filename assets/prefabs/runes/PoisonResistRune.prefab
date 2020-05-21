@@ -1,0 +1,38 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:PoisonResistRune",
+        "stackId": "EquipmentSmithing:tier1PoisonResistRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Rune of Poison Resistance (Tier 1)",
+        "description": "A rune that boosts poison resistance by 2 on the item its implanted onto."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1PoisonResist"
+    },
+    "RuneEquipmentEffect": {
+        "id": "Minor Poison Resistance"
+    },
+    "ResistEffect" : {
+        "magnitude" : 2,
+        "duration" : 600000,
+        "affectsUser" : true,
+        "affectsEnemies" : false,
+        "id" : "poisonDamage"
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:rune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that boosts poison resistance by 2 on the item its implanted onto."
+        ]
+    }
+}

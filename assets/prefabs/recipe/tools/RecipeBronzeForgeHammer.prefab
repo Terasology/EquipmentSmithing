@@ -1,0 +1,13 @@
+{
+    "ProcessDefinition": {
+        "processType": "Smithing:BasicSmithingProcess"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "Tools|Smithing:BronzeForgeHammer",
+
+        "recipeComponents": ["3*Smithing:BronzeBar"],
+        "recipeTools": ["1*hammer"],
+
+        "itemResult": "1*EquipmentSmithing:BronzeForgeHammer"
+    }
+}

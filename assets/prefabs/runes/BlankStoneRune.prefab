@@ -1,0 +1,29 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:BlankRune",
+        "stackId": "EquipmentSmithing:tier1BlankRune",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Blank Stone Rune",
+        "description": "A rune that can be used to store up to tier 1 magic effects."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "Rune": {
+        "runeID": "Tier1BlankRune",
+        "tier": 1
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:blankRune"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "A rune that can be used to store up to tier 1 magic effects."
+        ]
+    }
+}
