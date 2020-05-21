@@ -1,0 +1,18 @@
+{
+    "ProcessDefinition": {
+        "processType": "EquipmentSmithing:RunecraftingTier1Process"
+    },
+    "CraftingStationRecipe": {
+        "recipeId": "EquipmentSmithing:PhysicalDefenseRune",
+
+        "recipeComponents": ["1*EquipmentSmithing:blankRune", "2*EquipmentSmithing:fightEssence"],
+        "recipeTools": ["1*hammer"],
+        "requiredTemperature": 300,
+        "processingDuration": 2500,
+
+        "itemResult": "1*EquipmentSmithing:PhysicalDefenseRune"
+    },
+    "ForgingStationRecipe": {
+        "recipeId": "EquipmentSmithing:PhysicalDefenseRune"
+    }
+}

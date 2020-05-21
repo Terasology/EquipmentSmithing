@@ -1,0 +1,29 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:FightEssence",
+        "stackId": "EquipmentSmithing:fightEssence",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Fighting Essence",
+        "description": "Essence that affects combat capabilities."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "RuneEssence": {
+        "runeEssenceID": "FightEssence",
+        "tier": 1
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:fightEssence"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Essence that affects combat capabilities."
+        ]
+    }
+}

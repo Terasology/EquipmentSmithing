@@ -16,12 +16,21 @@
 package org.terasology.equipmentSmithing.ui;
 
 import com.google.common.base.Predicate;
-import org.terasology.durability.components.DurabilityComponent;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.prefab.Prefab;
 import org.terasology.equipment.component.EquipmentItemComponent;
+import org.terasology.equipment.component.effects.BoostEffectComponent;
+import org.terasology.equipment.component.effects.BreathingEffectComponent;
+import org.terasology.equipment.component.effects.BuffEffectComponent;
+import org.terasology.equipment.component.effects.CureDamageOverTimeEffectComponent;
+import org.terasology.equipment.component.effects.DamageOverTimeEffectComponent;
+import org.terasology.equipment.component.effects.DecoverEffectComponent;
+import org.terasology.equipment.component.effects.ItemUseSpeedEffectComponent;
 import org.terasology.equipment.component.effects.JumpSpeedEffectComponent;
+import org.terasology.equipment.component.effects.MultiJumpEffectComponent;
 import org.terasology.equipment.component.effects.RegenEffectComponent;
+import org.terasology.equipment.component.effects.ResistEffectComponent;
+import org.terasology.equipment.component.effects.StunEffectComponent;
 import org.terasology.equipment.component.effects.SwimSpeedEffectComponent;
 import org.terasology.equipment.component.effects.WalkSpeedEffectComponent;
 import org.terasology.equipmentSmithing.component.RuneComponent;
@@ -54,6 +63,12 @@ import java.util.List;
  * Potions specifically.
  */
 public class ForgingStationRecipe extends AbstractWorkstationRecipe {
+    private Class[] equipmentEffectComponents =
+            {BoostEffectComponent.class, BreathingEffectComponent.class, BuffEffectComponent.class, CureDamageOverTimeEffectComponent.class,
+             DamageOverTimeEffectComponent.class, DecoverEffectComponent.class, ItemUseSpeedEffectComponent.class, JumpSpeedEffectComponent.class,
+             MultiJumpEffectComponent.class, RegenEffectComponent.class, ResistEffectComponent.class, StunEffectComponent.class,
+             SwimSpeedEffectComponent.class, WalkSpeedEffectComponent.class};
+
     /**
      * Create the Herbalism Crafting Station's recipe based on the assigned CraftingStationRecipeComponent (i.e. the recipe parameters).
      *
@@ -228,12 +243,17 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         /**
          * Add an equipment effect onto an item. Note that this will replace the older effect if it already exists
          * on this item.
-         * TODO: Only four effects are added for onw. Add the rest later.
          *
          * @param item  A reference to the equipment item.
          * @param rune  A reference to the rune being applied.
          */
         private void addEquipmentEffect(EntityRef item, EntityRef rune) {
+            for (int i = 0; i < equipmentEffectComponents.length; i++) {
+                if (rune.hasComponent(equipmentEffectComponents[i])) {
+                    item.addComponent(rune.getComponent(equipmentEffectComponents[i]));
+                }
+            }
+            /*
             if (rune.hasComponent(JumpSpeedEffectComponent.class)) {
                 item.addComponent(rune.getComponent(JumpSpeedEffectComponent.class));
             } else if (rune.hasComponent(RegenEffectComponent.class)) {
@@ -243,6 +263,7 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
             } else if (rune.hasComponent(WalkSpeedEffectComponent.class)) {
                 item.addComponent(rune.getComponent(WalkSpeedEffectComponent.class));
             }
+            */
         }
     }
 

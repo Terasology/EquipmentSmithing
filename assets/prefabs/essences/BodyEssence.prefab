@@ -1,0 +1,29 @@
+{
+    "parent": "engine:iconItem",
+    "Item": {
+        "icon": "EquipmentSmithing:BodyEssence",
+        "stackId": "EquipmentSmithing:bodyEssence",
+        "consumedOnUse": false
+    },
+    "DisplayName": {
+        "name": "Body Essence",
+        "description": "Essence that affects the physical body."
+    },
+    "Durability": {
+        "durability": 1,
+        "maxDurability": 1
+    },
+    "RuneEssence": {
+        "runeEssenceID": "BodyEssence",
+        "tier": 1
+    },
+    "CraftingStationIngredient": {
+        "type": "EquipmentSmithing:bodyEssence"
+    },
+    "ItemHelp": {
+        "category": "EquipmentSmithing",
+        "paragraphText": [
+            "Essence that affects the physical body."
+        ]
+    }
+}
