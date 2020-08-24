@@ -21,17 +21,17 @@ import org.terasology.equipmentSmithing.EquipmentSmithing;
 import org.terasology.heat.component.HeatProducerComponent;
 import org.terasology.heat.ui.ThermometerWidget;
 import org.terasology.logic.players.LocalPlayer;
+import org.terasology.nui.UIWidget;
+import org.terasology.nui.databinding.Binding;
+import org.terasology.nui.databinding.ReadOnlyBinding;
+import org.terasology.nui.widgets.ActivateEventListener;
+import org.terasology.nui.widgets.UIButton;
+import org.terasology.nui.widgets.UILoadBar;
 import org.terasology.processing.ui.VerticalTextureProgressWidget;
 import org.terasology.registry.CoreRegistry;
 import org.terasology.rendering.nui.BaseInteractionScreen;
 import org.terasology.rendering.nui.NUIManager;
-import org.terasology.rendering.nui.UIWidget;
-import org.terasology.rendering.nui.databinding.Binding;
-import org.terasology.rendering.nui.databinding.ReadOnlyBinding;
 import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
-import org.terasology.rendering.nui.widgets.ActivateEventListener;
-import org.terasology.rendering.nui.widgets.UIButton;
-import org.terasology.rendering.nui.widgets.UILoadBar;
 import org.terasology.smithing.Smithing;
 import org.terasology.workstation.component.WorkstationProcessingComponent;
 import org.terasology.workstation.event.WorkstationProcessRequest;
@@ -110,127 +110,127 @@ public class ForgingStationWindow extends BaseInteractionScreen {
         WorkstationScreenUtils.setupTemperatureWidget(station, temperature, 20f);
 
         upgradeButton.subscribe(
-                new ActivateEventListener() {
-                    @Override
-                    public void onActivated(UIWidget widget) {
-                        EntityRef character = CoreRegistry.get(LocalPlayer.class).getCharacterEntity();
-                        character.send(new WorkstationProcessRequest(station, matchingUpgradeRecipe));
-                    }
-                });
+            new ActivateEventListener() {
+                @Override
+                public void onActivated(UIWidget widget) {
+                    EntityRef character = CoreRegistry.get(LocalPlayer.class).getCharacterEntity();
+                    character.send(new WorkstationProcessRequest(station, matchingUpgradeRecipe));
+                }
+            });
         upgradeButton.setVisible(false);
 
         burn.bindValue(
-                new Binding<Float>() {
-                    @Override
-                    public Float get() {
-                        HeatProducerComponent heatProducer = station.getComponent(HeatProducerComponent.class);
-                        List<HeatProducerComponent.FuelSourceConsume> consumedFuel = heatProducer.fuelConsumed;
-                        if (consumedFuel.size() == 0) {
-                            return 0f;
-                        }
-                        long gameTime = CoreRegistry.get(Time.class).getGameTimeInMs();
-
-                        HeatProducerComponent.FuelSourceConsume lastConsumed = consumedFuel.get(consumedFuel.size() - 1);
-                        if (gameTime > lastConsumed.startTime + lastConsumed.burnLength) {
-                            return 0f;
-                        }
-                        return 1f - (1f * (gameTime - lastConsumed.startTime) / lastConsumed.burnLength);
+            new Binding<Float>() {
+                @Override
+                public Float get() {
+                    HeatProducerComponent heatProducer = station.getComponent(HeatProducerComponent.class);
+                    List<HeatProducerComponent.FuelSourceConsume> consumedFuel = heatProducer.fuelConsumed;
+                    if (consumedFuel.size() == 0) {
+                        return 0f;
                     }
+                    long gameTime = CoreRegistry.get(Time.class).getGameTimeInMs();
 
-                    @Override
-                    public void set(Float value) {
+                    HeatProducerComponent.FuelSourceConsume lastConsumed = consumedFuel.get(consumedFuel.size() - 1);
+                    if (gameTime > lastConsumed.startTime + lastConsumed.burnLength) {
+                        return 0f;
                     }
-                });
+                    return 1f - (1f * (gameTime - lastConsumed.startTime) / lastConsumed.burnLength);
+                }
+
+                @Override
+                public void set(Float value) {
+                }
+            });
 
         availableRecipes.setStation(station);
 
         craftingProgress.bindVisible(
-                new Binding<Boolean>() {
-                    @Override
-                    public Boolean get() {
-                        WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
-                        if (processing == null) {
-                            return false;
-                        }
-                        WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
-                        return heatingProcess != null;
+            new Binding<Boolean>() {
+                @Override
+                public Boolean get() {
+                    WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
+                    if (processing == null) {
+                        return false;
                     }
+                    WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
+                    return heatingProcess != null;
+                }
 
-                    @Override
-                    public void set(Boolean value) {
-                    }
-                });
+                @Override
+                public void set(Boolean value) {
+                }
+            });
         craftingProgress.bindValue(
-                new Binding<Float>() {
-                    @Override
-                    public Float get() {
-                        WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
-                        if (processing == null) {
-                            return 1f;
-                        }
-                        WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
-                        if (heatingProcess == null) {
-                            return 1f;
-                        }
-
-                        long gameTime = CoreRegistry.get(Time.class).getGameTimeInMs();
-
-                        return 1f * (gameTime - heatingProcess.processingStartTime) / (heatingProcess.processingFinishTime - heatingProcess.processingStartTime);
+            new Binding<Float>() {
+                @Override
+                public Float get() {
+                    WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
+                    if (processing == null) {
+                        return 1f;
+                    }
+                    WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
+                    if (heatingProcess == null) {
+                        return 1f;
                     }
 
-                    @Override
-                    public void set(Float value) {
-                    }
-                });
+                    long gameTime = CoreRegistry.get(Time.class).getGameTimeInMs();
+
+                    return 1f * (gameTime - heatingProcess.processingStartTime) / (heatingProcess.processingFinishTime - heatingProcess.processingStartTime);
+                }
+
+                @Override
+                public void set(Float value) {
+                }
+            });
 
         // Set the tooltip Strings here.
         ingredientsInventory.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Place forging ingredients here.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Place forging ingredients here.";
                 }
+            }
         );
         fuelInput.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Place fuel for burner here.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Place fuel for burner here.";
                 }
+            }
         );
         upgrades.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Place item(s) for upgrading this station here.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Place item(s) for upgrading this station here.";
                 }
+            }
         );
         toolsInventory.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Place forging tool(s) here.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Place forging tool(s) here.";
                 }
+            }
         );
         booster.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Place rune to add extra stats or effects to the final item.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Place rune to add extra stats or effects to the final item.";
                 }
+            }
         );
         resultInventory.bindTooltipString(
-                new ReadOnlyBinding<String>() {
-                    @Override
-                    public String get() {
-                        return "Output item is sent here.";
-                    }
+            new ReadOnlyBinding<String>() {
+                @Override
+                public String get() {
+                    return "Output item is sent here.";
                 }
+            }
         );
     }
 
@@ -274,8 +274,7 @@ public class ForgingStationWindow extends BaseInteractionScreen {
 
                 // Before checking if the workstation has the necessary items in the upgrade slot, check to see if this
                 // upgrade process actually pertains to this workstation type.
-                if (upgradeProcess.getWorkstationType().equalsIgnoreCase(workstation.getParentPrefab().getName()))
-                {
+                if (upgradeProcess.getWorkstationType().equalsIgnoreCase(workstation.getParentPrefab().getName())) {
                     UpgradeRecipe upgradeRecipe = upgradeProcess.getUpgradeRecipe();
                     final UpgradeRecipe.UpgradeResult upgradeResult = upgradeRecipe.getMatchingUpgradeResult(workstation);
 
