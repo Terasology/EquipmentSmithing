@@ -16,7 +16,6 @@
 package org.terasology.equipmentSmithing.system;
 
 import com.google.common.base.Predicate;
-import org.terasology.assets.ResourceUrn;
 import org.terasology.entitySystem.entity.EntityManager;
 import org.terasology.entitySystem.entity.EntityRef;
 import org.terasology.entitySystem.prefab.Prefab;
@@ -26,6 +25,7 @@ import org.terasology.entitySystem.systems.RegisterSystem;
 import org.terasology.equipmentSmithing.EquipmentSmithing;
 import org.terasology.equipmentSmithing.component.ForgingStationRecipeComponent;
 import org.terasology.equipmentSmithing.ui.ForgingStationRecipe;
+import org.terasology.gestalt.assets.ResourceUrn;
 import org.terasology.multiBlock.Basic2DSizeFilter;
 import org.terasology.multiBlock.BlockUriEntityFilter;
 import org.terasology.multiBlock.MultiBlockFormRecipeRegistry;
