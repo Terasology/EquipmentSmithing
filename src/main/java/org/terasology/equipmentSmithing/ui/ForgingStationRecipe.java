@@ -3,8 +3,11 @@
 package org.terasology.equipmentSmithing.ui;
 
 import com.google.common.base.Predicate;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.prefab.Prefab;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.entitySystem.prefab.Prefab;
+import org.terasology.engine.logic.common.DisplayNameComponent;
+import org.terasology.engine.registry.CoreRegistry;
+import org.terasology.engine.utilities.Assets;
 import org.terasology.equipment.component.EquipmentItemComponent;
 import org.terasology.equipment.component.effects.BoostEffectComponent;
 import org.terasology.equipment.component.effects.BreathingEffectComponent;
@@ -25,14 +28,11 @@ import org.terasology.equipmentSmithing.component.RuneEquipmentEffectComponent;
 import org.terasology.equipmentSmithing.component.RuneEquipmentModifierComponent;
 import org.terasology.equipmentSmithing.component.RunePhysicalModifierComponent;
 import org.terasology.equipmentSmithing.system.ForgingStationIngredientPredicate;
-import org.terasology.logic.common.DisplayNameComponent;
-import org.terasology.logic.inventory.InventoryManager;
-import org.terasology.logic.inventory.InventoryUtils;
+import org.terasology.inventory.logic.InventoryManager;
+import org.terasology.inventory.logic.InventoryUtils;
+import org.terasology.inventory.rendering.nui.layers.ingame.ItemIcon;
 import org.terasology.nui.widgets.TooltipLine;
 import org.terasology.physicalstats.component.PhysicalStatsModifierComponent;
-import org.terasology.registry.CoreRegistry;
-import org.terasology.rendering.nui.layers.ingame.inventory.ItemIcon;
-import org.terasology.utilities.Assets;
 import org.terasology.workstationCrafting.component.CraftingStationRecipeComponent;
 import org.terasology.workstationCrafting.system.recipe.behaviour.ConsumeItemCraftBehaviour;
 import org.terasology.workstationCrafting.system.recipe.behaviour.InventorySlotResolver;
@@ -46,20 +46,24 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A custom workstation recipe format for herbalism related recipes. Note that this is only intended to be used with the HerbalismCraftingStations.
- * Potions specifically.
+ * A custom workstation recipe format for herbalism related recipes. Note that this is only intended to be used with the
+ * HerbalismCraftingStations. Potions specifically.
  */
 public class ForgingStationRecipe extends AbstractWorkstationRecipe {
-    private Class[] equipmentEffectComponents =
-            {BoostEffectComponent.class, BreathingEffectComponent.class, BuffEffectComponent.class, CureDamageOverTimeEffectComponent.class,
-             DamageOverTimeEffectComponent.class, DecoverEffectComponent.class, ItemUseSpeedEffectComponent.class, JumpSpeedEffectComponent.class,
-             MultiJumpEffectComponent.class, RegenEffectComponent.class, ResistEffectComponent.class, StunEffectComponent.class,
-             SwimSpeedEffectComponent.class, WalkSpeedEffectComponent.class};
+    private final Class[] equipmentEffectComponents =
+            {BoostEffectComponent.class, BreathingEffectComponent.class, BuffEffectComponent.class,
+                    CureDamageOverTimeEffectComponent.class,
+                    DamageOverTimeEffectComponent.class, DecoverEffectComponent.class,
+                    ItemUseSpeedEffectComponent.class, JumpSpeedEffectComponent.class,
+                    MultiJumpEffectComponent.class, RegenEffectComponent.class, ResistEffectComponent.class,
+                    StunEffectComponent.class,
+                    SwimSpeedEffectComponent.class, WalkSpeedEffectComponent.class};
 
     /**
-     * Create the Herbalism Crafting Station's recipe based on the assigned CraftingStationRecipeComponent (i.e. the recipe parameters).
+     * Create the Herbalism Crafting Station's recipe based on the assigned CraftingStationRecipeComponent (i.e. the
+     * recipe parameters).
      *
-     * @param recipe    The titular recipe applicable to this HerbalismStation.
+     * @param recipe The titular recipe applicable to this HerbalismStation.
      */
     public ForgingStationRecipe(CraftingStationRecipeComponent recipe) {
         // Set the required heat and processing duration. We don't need to set the required fluids as this station will
@@ -70,7 +74,8 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         String[] splitItemResult = recipe.itemResult.split("\\*");
 
         // Create and set the custom result factory.
-        EquipmentRecipeResultFactory forgeRecipeResultFactory = new EquipmentRecipeResultFactory(Assets.getPrefab(splitItemResult[1]).get(),
+        EquipmentRecipeResultFactory forgeRecipeResultFactory =
+                new EquipmentRecipeResultFactory(Assets.getPrefab(splitItemResult[1]).get(),
                 splitItemResult[1], Integer.parseInt(splitItemResult[0]));
 
         // Add each of the ingredient (consumption) behaviors by parsing through the recipe components.
@@ -79,8 +84,10 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
             int count = Integer.parseInt(split[0]);
             String type = split[1];
 
-            addIngredientBehaviour(new ConsumeForgeIngredientBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("INPUT"), forgeRecipeResultFactory));
-            //addIngredientBehaviour(new ConsumeBoosterBehaviour(new ForgingStationIngredientPredicate(type), count, new InventorySlotTypeResolver("BOOSTER"), potionRecipeResultFactory));
+            addIngredientBehaviour(new ConsumeForgeIngredientBehaviour(new ForgingStationIngredientPredicate(type),
+                    count, new InventorySlotTypeResolver("INPUT"), forgeRecipeResultFactory));
+            //addIngredientBehaviour(new ConsumeBoosterBehaviour(new ForgingStationIngredientPredicate(type), count, 
+            // new InventorySlotTypeResolver("BOOSTER"), potionRecipeResultFactory));
         }
 
         // Add each of the tool behaviors by parsing through the recipe tools.
@@ -103,14 +110,42 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
      * This internal class is used for creating and defining the resultant equipment item.
      */
     private final class EquipmentRecipeResultFactory extends ItemRecipeResultFactory {
-        private String toolTip;                      /** Item's tooltip. This id displayed by default when mouse hovered over. */
-        private EntityRef runeRef = EntityRef.NULL;  /** Reference to the last tune used.
+        private String toolTip;
+        /**
+         * Item's tooltip. This id displayed by default when mouse hovered over.
+         */
+        private EntityRef runeRef = EntityRef.NULL;
 
         /**
-         * Set the reference to the current rune.
+         * Basic constructor for setting up this result factory.
          *
-         * @param ref           Reference to the rune entity.
-         * @param destroyOld    Should the old rune entity be destroyed?
+         * @param prefab Prefab of the item to be created.
+         * @param count Number of the item to be created.
+         */
+        private EquipmentRecipeResultFactory(Prefab prefab, int count) {
+            super(prefab, count);
+            this.toolTip = toolTip;
+        }
+
+        /**
+         * Constructor for when the equipment item's toolTip needs to be replaced.
+         *
+         * @param prefab Prefab of the item to be created.
+         * @param toolTip Item's tooltip to be displayed.
+         * @param count Number of the items to be created.
+         */
+        private EquipmentRecipeResultFactory(Prefab prefab, String toolTip, int count) {
+            super(prefab, count);
+            this.toolTip = toolTip;
+        }
+
+        /**
+         * Reference to the last tune used.
+         * <p>
+         * /** Set the reference to the current rune.
+         *
+         * @param ref Reference to the rune entity.
+         * @param destroyOld Should the old rune entity be destroyed?
          */
         public void setRuneRef(EntityRef ref, boolean destroyOld) {
             if (destroyOld && runeRef != EntityRef.NULL) {
@@ -121,33 +156,10 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         }
 
         /**
-         * Basic constructor for setting up this result factory.
-         *
-         * @param prefab    Prefab of the item to be created.
-         * @param count     Number of the item to be created.
-         */
-        private EquipmentRecipeResultFactory(Prefab prefab, int count) {
-            super(prefab, count);
-            this.toolTip = toolTip;
-        }
-
-        /**
-         * Constructor for when the equipment item's toolTip needs to be replaced.
-         *
-         * @param prefab    Prefab of the item to be created.
-         * @param toolTip   Item's tooltip to be displayed.
-         * @param count     Number of the items to be created.
-         */
-        private EquipmentRecipeResultFactory(Prefab prefab, String toolTip, int count) {
-            super(prefab, count);
-            this.toolTip = toolTip;
-        }
-
-        /**
          * Setup the display of the resultant item. This includes the icon and description text.
          *
-         * @param parameters    List of parameters of this particular recipe component.
-         * @param itemIcon      Graphical icon of this item.
+         * @param parameters List of parameters of this particular recipe component.
+         * @param itemIcon Graphical icon of this item.
          */
         @Override
         public void setupDisplay(List<String> parameters, ItemIcon itemIcon) {
@@ -160,9 +172,9 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         /**
          * Create the resultant equipment item(s) using the given recipe components.
          *
-         * @param parameters    All of the recipe components necessary for forging this equipment piece.
-         * @param multiplier    The number of items that are created by this recipe.
-         * @return              A reference to the resultant equipment item.
+         * @param parameters All of the recipe components necessary for forging this equipment piece.
+         * @param multiplier The number of items that are created by this recipe.
+         * @return A reference to the resultant equipment item.
          */
         @Override
         public EntityRef createResult(List<String> parameters, int multiplier) {
@@ -171,8 +183,10 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
 
             // If there was a rune processed.
             if (runeRef != EntityRef.NULL) {
-                RuneEquipmentModifierComponent runeEquipModifier = runeRef.getComponent(RuneEquipmentModifierComponent.class);
-                RunePhysicalModifierComponent runePhysicalModifierComponent = runeRef.getComponent(RunePhysicalModifierComponent.class);
+                RuneEquipmentModifierComponent runeEquipModifier =
+                        runeRef.getComponent(RuneEquipmentModifierComponent.class);
+                RunePhysicalModifierComponent runePhysicalModifierComponent =
+                        runeRef.getComponent(RunePhysicalModifierComponent.class);
                 String runeName = runeRef.getComponent(DisplayNameComponent.class).name;
 
                 // Add the effects of the rune's equip modifier (if any).
@@ -190,7 +204,8 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
                 // Add the effects of the rune's physical stats modifiers (if any).
                 if (runePhysicalModifierComponent != null) {
 
-                    PhysicalStatsModifierComponent phyStatsMod = result.getComponent(PhysicalStatsModifierComponent.class);
+                    PhysicalStatsModifierComponent phyStatsMod =
+                            result.getComponent(PhysicalStatsModifierComponent.class);
 
                     if (phyStatsMod == null) {
                         phyStatsMod = new PhysicalStatsModifierComponent();
@@ -228,11 +243,11 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         }
 
         /**
-         * Add an equipment effect onto an item. Note that this will replace the older effect if it already exists
-         * on this item.
+         * Add an equipment effect onto an item. Note that this will replace the older effect if it already exists on
+         * this item.
          *
-         * @param item  A reference to the equipment item.
-         * @param rune  A reference to the rune being applied.
+         * @param item A reference to the equipment item.
+         * @param rune A reference to the rune being applied.
          */
         private void addEquipmentEffect(EntityRef item, EntityRef rune) {
             for (int i = 0; i < equipmentEffectComponents.length; i++) {
@@ -258,17 +273,19 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
      * This internal class is used to define the custom consumption behavior of forge ingredients during crafting.
      */
     private final class ConsumeForgeIngredientBehaviour extends ConsumeItemCraftBehaviour {
-        /** Reference to the equipment forging result factory. */
-        private EquipmentRecipeResultFactory equipmentRecipeResultFactory;
+        /**
+         * Reference to the equipment forging result factory.
+         */
+        private final EquipmentRecipeResultFactory equipmentRecipeResultFactory;
         private EntityRef runeRef = EntityRef.NULL;
 
         /**
          * Constructor which creates the baseline for this item consumption behavior.
          *
-         * @param matcher                       Predicate matcher for filtering out items that are not forge ingredients.
-         * @param count                         Quantity of this ingredient to consume while crafting.
-         * @param resolver                      To manage the inventory changes during this behavior.
-         * @param equipmentRecipeResultFactory  Reference to the associated equipment result factory.
+         * @param matcher Predicate matcher for filtering out items that are not forge ingredients.
+         * @param count Quantity of this ingredient to consume while crafting.
+         * @param resolver To manage the inventory changes during this behavior.
+         * @param equipmentRecipeResultFactory Reference to the associated equipment result factory.
          */
         private ConsumeForgeIngredientBehaviour(Predicate<EntityRef> matcher, int count, InventorySlotResolver resolver,
                                                 EquipmentRecipeResultFactory equipmentRecipeResultFactory) {
@@ -277,12 +294,12 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
         }
 
         /**
-         * Get the ingredient parameters and where they are located in the workstation's inventory, and return them as
-         * a String.
+         * Get the ingredient parameters and where they are located in the workstation's inventory, and return them as a
+         * String.
          *
-         * @param slots     List of workstation inventory slots that the item is present in.
-         * @param item      Reference to the recipe component item in question.
-         * @return          The ingredient parameters of this item in a combined String.
+         * @param slots List of workstation inventory slots that the item is present in.
+         * @param item Reference to the recipe component item in question.
+         * @return The ingredient parameters of this item in a combined String.
          */
         @Override
         protected String getParameter(List<Integer> slots, EntityRef item) {
@@ -294,7 +311,8 @@ public class ForgingStationRecipe extends AbstractWorkstationRecipe {
             EntityRef boosterItem = InventoryUtils.getItemAt(entity, 6);
             if (boosterItem != EntityRef.NULL && boosterItem.hasComponent(RuneComponent.class)) {
                 runeRef = boosterItem.copy();
-                CoreRegistry.get(InventoryManager.class).removeItem(entity, instigator, boosterItem, true, 1 * multiplier);
+                CoreRegistry.get(InventoryManager.class).removeItem(entity, instigator, boosterItem, true,
+                        1 * multiplier);
             } else {
                 runeRef = EntityRef.NULL;
             }

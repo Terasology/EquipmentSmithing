@@ -2,12 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 package org.terasology.equipmentSmithing.ui;
 
-import org.terasology.engine.Time;
-import org.terasology.entitySystem.entity.EntityRef;
+import org.terasology.engine.core.Time;
+import org.terasology.engine.entitySystem.entity.EntityRef;
+import org.terasology.engine.logic.players.LocalPlayer;
+import org.terasology.engine.registry.CoreRegistry;
+import org.terasology.engine.rendering.nui.BaseInteractionScreen;
+import org.terasology.engine.rendering.nui.NUIManager;
 import org.terasology.equipmentSmithing.EquipmentSmithing;
 import org.terasology.heat.component.HeatProducerComponent;
 import org.terasology.heat.ui.ThermometerWidget;
-import org.terasology.logic.players.LocalPlayer;
+import org.terasology.inventory.rendering.nui.layers.ingame.InventoryGrid;
 import org.terasology.nui.UIWidget;
 import org.terasology.nui.databinding.Binding;
 import org.terasology.nui.databinding.ReadOnlyBinding;
@@ -15,10 +19,6 @@ import org.terasology.nui.widgets.ActivateEventListener;
 import org.terasology.nui.widgets.UIButton;
 import org.terasology.nui.widgets.UILoadBar;
 import org.terasology.processing.ui.VerticalTextureProgressWidget;
-import org.terasology.registry.CoreRegistry;
-import org.terasology.rendering.nui.BaseInteractionScreen;
-import org.terasology.rendering.nui.NUIManager;
-import org.terasology.rendering.nui.layers.ingame.inventory.InventoryGrid;
 import org.terasology.workstation.component.WorkstationProcessingComponent;
 import org.terasology.workstation.event.WorkstationProcessRequest;
 import org.terasology.workstation.process.WorkstationProcess;
@@ -116,7 +116,8 @@ public class ForgingStationWindow extends BaseInteractionScreen {
                         }
                         long gameTime = CoreRegistry.get(Time.class).getGameTimeInMs();
 
-                        HeatProducerComponent.FuelSourceConsume lastConsumed = consumedFuel.get(consumedFuel.size() - 1);
+                        HeatProducerComponent.FuelSourceConsume lastConsumed =
+                                consumedFuel.get(consumedFuel.size() - 1);
                         if (gameTime > lastConsumed.startTime + lastConsumed.burnLength) {
                             return 0f;
                         }
@@ -134,11 +135,13 @@ public class ForgingStationWindow extends BaseInteractionScreen {
                 new Binding<Boolean>() {
                     @Override
                     public Boolean get() {
-                        WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
+                        WorkstationProcessingComponent processing =
+                                station.getComponent(WorkstationProcessingComponent.class);
                         if (processing == null) {
                             return false;
                         }
-                        WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
+                        WorkstationProcessingComponent.ProcessDef heatingProcess =
+                                processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
                         return heatingProcess != null;
                     }
 
@@ -150,11 +153,13 @@ public class ForgingStationWindow extends BaseInteractionScreen {
                 new Binding<Float>() {
                     @Override
                     public Float get() {
-                        WorkstationProcessingComponent processing = station.getComponent(WorkstationProcessingComponent.class);
+                        WorkstationProcessingComponent processing =
+                                station.getComponent(WorkstationProcessingComponent.class);
                         if (processing == null) {
                             return 1f;
                         }
-                        WorkstationProcessingComponent.ProcessDef heatingProcess = processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
+                        WorkstationProcessingComponent.ProcessDef heatingProcess =
+                                processing.processes.get(EquipmentSmithing.FORGING_TIER_1_PROCESS);
                         if (heatingProcess == null) {
                             return 1f;
                         }
@@ -254,15 +259,18 @@ public class ForgingStationWindow extends BaseInteractionScreen {
     }
 
     private String getMatchingUpgradeRecipe(WorkstationRegistry craftingRegistry) {
-        for (WorkstationProcess workstationProcess : craftingRegistry.getWorkstationProcesses(Collections.singleton(CraftingStationUpgradeRecipeComponent.PROCESS_TYPE))) {
+        for (WorkstationProcess workstationProcess :
+                craftingRegistry.getWorkstationProcesses(Collections.singleton(CraftingStationUpgradeRecipeComponent.PROCESS_TYPE))) {
             if (workstationProcess instanceof CraftingWorkstationUpgradeProcess) {
-                CraftingWorkstationUpgradeProcess upgradeProcess = (CraftingWorkstationUpgradeProcess) workstationProcess;
+                CraftingWorkstationUpgradeProcess upgradeProcess =
+                        (CraftingWorkstationUpgradeProcess) workstationProcess;
 
                 // Before checking if the workstation has the necessary items in the upgrade slot, check to see if this
                 // upgrade process actually pertains to this workstation type.
                 if (upgradeProcess.getWorkstationType().equalsIgnoreCase(workstation.getParentPrefab().getName())) {
                     UpgradeRecipe upgradeRecipe = upgradeProcess.getUpgradeRecipe();
-                    final UpgradeRecipe.UpgradeResult upgradeResult = upgradeRecipe.getMatchingUpgradeResult(workstation);
+                    final UpgradeRecipe.UpgradeResult upgradeResult =
+                            upgradeRecipe.getMatchingUpgradeResult(workstation);
 
                     if (upgradeResult != null) {
                         return workstationProcess.getId();
