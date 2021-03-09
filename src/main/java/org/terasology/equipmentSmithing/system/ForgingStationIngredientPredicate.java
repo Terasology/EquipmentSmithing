@@ -16,30 +16,8 @@
 package org.terasology.equipmentSmithing.system;
 
 import com.google.common.base.Predicate;
-import org.terasology.assets.ResourceUrn;
-import org.terasology.entitySystem.entity.EntityManager;
-import org.terasology.entitySystem.entity.EntityRef;
-import org.terasology.entitySystem.prefab.Prefab;
-import org.terasology.entitySystem.prefab.PrefabManager;
-import org.terasology.entitySystem.systems.BaseComponentSystem;
-import org.terasology.entitySystem.systems.RegisterSystem;
-import org.terasology.equipmentSmithing.EquipmentSmithing;
-import org.terasology.equipmentSmithing.component.ForgingStationRecipeComponent;
-import org.terasology.multiBlock.Basic2DSizeFilter;
-import org.terasology.multiBlock.BlockUriEntityFilter;
-import org.terasology.multiBlock.MultiBlockFormRecipeRegistry;
-import org.terasology.multiBlock.recipe.LayeredMultiBlockFormItemRecipe;
-import org.terasology.processing.system.AnyActivityFilter;
-import org.terasology.processing.system.ToolTypeEntityFilter;
-import org.terasology.registry.In;
-import org.terasology.workstation.system.WorkstationRegistry;
+import org.terasology.engine.entitySystem.entity.EntityRef;
 import org.terasology.workstationCrafting.component.CraftingStationIngredientComponent;
-import org.terasology.workstationCrafting.component.CraftingStationMaterialComponent;
-import org.terasology.workstationCrafting.component.CraftingStationRecipeComponent;
-import org.terasology.workstationCrafting.system.CraftInHandRecipeRegistry;
-import org.terasology.workstationCrafting.system.CraftingWorkstationProcessFactory;
-import org.terasology.world.block.BlockManager;
-import org.terasology.world.block.BlockUri;
 
 /**
  * This predicate class is used to filter out items that are not compatible with HerbalismStations.

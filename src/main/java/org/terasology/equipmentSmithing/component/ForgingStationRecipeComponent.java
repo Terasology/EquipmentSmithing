@@ -15,9 +15,7 @@
  */
 package org.terasology.equipmentSmithing.component;
 
-import org.terasology.entitySystem.Component;
-
-import java.util.List;
+import org.terasology.engine.entitySystem.Component;
 
 /**
  * Add this Component to any recipe prefab that is supposed to be creatable in a ForgingStation or similar.
