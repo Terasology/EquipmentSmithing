@@ -15,4 +15,9 @@ public class RuneEquipmentEffectComponent implements Component<RuneEquipmentEffe
      */
     @Replicate
     public String id = "No Effect";
+
+    @Override
+    public void copy(RuneEquipmentEffectComponent other) {
+        this.id = other.id;
+    }
 }

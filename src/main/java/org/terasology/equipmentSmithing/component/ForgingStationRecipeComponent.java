@@ -11,4 +11,9 @@ import org.terasology.gestalt.entitysystem.component.Component;
 public class ForgingStationRecipeComponent implements Component<ForgingStationRecipeComponent> {
     // The following variables are unused.
     public String recipeId;
+
+    @Override
+    public void copy(ForgingStationRecipeComponent other) {
+        this.recipeId = other.recipeId;
+    }
 }

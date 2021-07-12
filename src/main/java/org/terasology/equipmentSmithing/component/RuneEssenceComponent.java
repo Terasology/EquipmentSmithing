@@ -11,4 +11,10 @@ public class RuneEssenceComponent implements Component<RuneEssenceComponent> {
 
     @Replicate
     public int tier = 1;
+
+    @Override
+    public void copy(RuneEssenceComponent other) {
+        this.runeEssenceID = other.runeEssenceID;
+        this.tier = other.tier;
+    }
 }

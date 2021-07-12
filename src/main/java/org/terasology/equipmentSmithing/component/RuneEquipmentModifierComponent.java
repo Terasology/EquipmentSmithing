@@ -20,4 +20,12 @@ public class RuneEquipmentModifierComponent implements Component<RuneEquipmentMo
 
     @Replicate
     public int speed = 0;
+
+    @Override
+    public void copy(RuneEquipmentModifierComponent other) {
+        this.attack = other.attack;
+        this.defense = other.defense;
+        this.weight = other.weight;
+        this.speed = other.speed;
+    }
 }
