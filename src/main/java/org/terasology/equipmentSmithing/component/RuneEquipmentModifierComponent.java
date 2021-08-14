@@ -22,7 +22,7 @@ public class RuneEquipmentModifierComponent implements Component<RuneEquipmentMo
     public int speed = 0;
 
     @Override
-    public void copy(RuneEquipmentModifierComponent other) {
+    public void copyFrom(RuneEquipmentModifierComponent other) {
         this.attack = other.attack;
         this.defense = other.defense;
         this.weight = other.weight;

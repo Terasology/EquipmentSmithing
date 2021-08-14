@@ -13,7 +13,7 @@ public class RuneEssenceComponent implements Component<RuneEssenceComponent> {
     public int tier = 1;
 
     @Override
-    public void copy(RuneEssenceComponent other) {
+    public void copyFrom(RuneEssenceComponent other) {
         this.runeEssenceID = other.runeEssenceID;
         this.tier = other.tier;
     }

@@ -59,7 +59,7 @@ public class RunePhysicalModifierComponent implements Component<RunePhysicalModi
     public int luck = 0;
 
     @Override
-    public void copy(RunePhysicalModifierComponent other) {
+    public void copyFrom(RunePhysicalModifierComponent other) {
         this.id = other.id;
         this.strength = other.strength;
         this.dexterity = other.dexterity;

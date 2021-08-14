@@ -17,7 +17,7 @@ public class RuneEquipmentEffectComponent implements Component<RuneEquipmentEffe
     public String id = "No Effect";
 
     @Override
-    public void copy(RuneEquipmentEffectComponent other) {
+    public void copyFrom(RuneEquipmentEffectComponent other) {
         this.id = other.id;
     }
 }

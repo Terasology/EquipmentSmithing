@@ -13,7 +13,7 @@ public class ForgingStationRecipeComponent implements Component<ForgingStationRe
     public String recipeId;
 
     @Override
-    public void copy(ForgingStationRecipeComponent other) {
+    public void copyFrom(ForgingStationRecipeComponent other) {
         this.recipeId = other.recipeId;
     }
 }
